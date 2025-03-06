@@ -5,6 +5,7 @@ namespace MultiVersion\network\proto\v486;
 use MultiVersion\Loader;
 use MultiVersion\network\MVNetworkSession;
 use MultiVersion\network\proto\latest\LatestChunkSerializerWrapper;
+use MultiVersion\network\proto\v486\packets\types\v486CreativeContentEntry;
 use MultiVersion\network\proto\v486\packets\v486CreativeContentPacket;
 use MultiVersion\network\proto\v486\packets\v486MobArmorEquipmentPacket;
 use MultiVersion\network\proto\v486\packets\v486SetTitlePacket;
@@ -96,8 +97,6 @@ use pocketmine\network\mcpe\protocol\TransferPacket;
 use pocketmine\network\mcpe\protocol\types\AbilitiesLayer;
 use pocketmine\network\mcpe\protocol\types\ActorEvent;
 use pocketmine\network\mcpe\protocol\types\CacheableNbt;
-use pocketmine\network\mcpe\protocol\types\InteractionMode;
-use pocketmine\network\mcpe\protocol\types\inventory\CreativeContentEntry;
 use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\network\mcpe\protocol\types\ParticleIds;
@@ -135,7 +134,7 @@ class v486PacketTranslator extends PacketTranslator{
 		$entries = [];
 		foreach(CreativeInventory::getInstance()->getAll() as $k => $item){
 			try{
-				$entries[] = new CreativeContentEntry($k, $typeConverter->coreItemStackToNet($item));
+				$entries[] = new v486CreativeContentEntry($k, $typeConverter->coreItemStackToNet($item));
 			}catch(AssumptionFailedError){
 
 			}

@@ -7,6 +7,7 @@ use MultiVersion\network\MVNetworkSession;
 use MultiVersion\network\proto\chunk\serializer\MultiLayeredChunkSerializer;
 use MultiVersion\network\proto\PacketTranslator;
 use MultiVersion\network\proto\static\MVRuntimeIDtoStateID;
+use MultiVersion\network\proto\v419\packets\types\v419CreativeContentEntry;
 use MultiVersion\network\proto\v419\packets\v419AddActorPacket;
 use MultiVersion\network\proto\v419\packets\v419AddPlayerPacket;
 use MultiVersion\network\proto\v419\packets\v419AddVolumeEntityPacket;
@@ -108,8 +109,6 @@ use pocketmine\network\mcpe\protocol\TransferPacket;
 use pocketmine\network\mcpe\protocol\types\AbilitiesLayer;
 use pocketmine\network\mcpe\protocol\types\ActorEvent;
 use pocketmine\network\mcpe\protocol\types\CacheableNbt;
-use pocketmine\network\mcpe\protocol\types\InteractionMode;
-use pocketmine\network\mcpe\protocol\types\inventory\CreativeContentEntry;
 use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\network\mcpe\protocol\types\ParticleIds;
@@ -147,7 +146,7 @@ class v419PacketTranslator extends PacketTranslator{
 		$entries = [];
 		foreach(CreativeInventory::getInstance()->getAll() as $k => $item){
 			try{
-				$entries[] = new CreativeContentEntry($k, $typeConverter->coreItemStackToNet($item));
+				$entries[] = new v419CreativeContentEntry($k, $typeConverter->coreItemStackToNet($item));
 			}catch(AssumptionFailedError){
 
 			}

@@ -15,25 +15,21 @@ declare(strict_types=1);
 namespace MultiVersion\network\proto\v486\packets;
 
 use MultiVersion\network\proto\v419\packets\v419CreativeContentPacket;
+use MultiVersion\network\proto\v486\packets\types\v486CreativeContentEntry;
 use pocketmine\network\mcpe\protocol\CreativeContentPacket;
 use pocketmine\network\mcpe\protocol\PacketHandlerInterface;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
-use pocketmine\network\mcpe\protocol\types\entity\Attribute;
-use pocketmine\network\mcpe\protocol\types\entity\UpdateAttribute;
-use pocketmine\network\mcpe\protocol\types\inventory\CreativeContentEntry;
-use pocketmine\network\mcpe\protocol\UpdateAttributesPacket;
-use function array_values;
 
 class v486CreativeContentPacket extends CreativeContentPacket {
     public const NETWORK_ID = ProtocolInfo::CREATIVE_CONTENT_PACKET;
-    /** @var CreativeContentEntry[] */
+    /** @var v486CreativeContentEntry[] */
     public array $entries;
 
     /**
      * @generate-create-func
      * @param CreativeContentPacket $packet
-     * @return v419CreativeContentPacket
+     * @return v486CreativeContentPacket
      */
     public static function fromLatest(CreativeContentPacket $packet) : self{
         $result = new self;
@@ -42,13 +38,13 @@ class v486CreativeContentPacket extends CreativeContentPacket {
     }
 
 
-    /** @return CreativeContentEntry[] */
+    /** @return v486CreativeContentEntry[] */
     public function getEntries() : array{ return $this->entries; }
 
     protected function decodePayload(PacketSerializer $in) : void{
         $this->entries = [];
         for($i = 0, $len = $in->getUnsignedVarInt(); $i < $len; ++$i){
-            $this->entries[] = CreativeContentEntry::read($in);
+            $this->entries[] = v486CreativeContentEntry::read($in);
         }
     }
 
