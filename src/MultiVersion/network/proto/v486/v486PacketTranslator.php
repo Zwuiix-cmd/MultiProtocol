@@ -5,10 +5,12 @@ namespace MultiVersion\network\proto\v486;
 use MultiVersion\Loader;
 use MultiVersion\network\MVNetworkSession;
 use MultiVersion\network\proto\latest\LatestChunkSerializerWrapper;
+use MultiVersion\network\proto\v486\packets\v486CreativeContentPacket;
 use MultiVersion\network\proto\v486\packets\v486MobArmorEquipmentPacket;
 use MultiVersion\network\proto\v486\packets\v486SetTitlePacket;
 use MultiVersion\network\proto\v486\packets\v486TransferPacket;
 use MultiVersion\network\proto\v486\packets\v486UpdateAttributesPacket;
+use pocketmine\network\mcpe\protocol\ItemRegistryPacket;
 use pocketmine\network\mcpe\protocol\MobArmorEquipmentPacket;
 use MultiVersion\network\proto\PacketTranslator;
 use MultiVersion\network\proto\static\MVRuntimeIDtoStateID;
@@ -138,7 +140,9 @@ class v486PacketTranslator extends PacketTranslator{
 
 			}
 		}
-		$this->creativeContent = CreativeContentPacket::create($entries);
+        $this->creativeContent = new v486CreativeContentPacket();
+        $this->creativeContent->entries = $entries;
+
 		$this->biomeDefs = BiomeDefinitionListPacket::create(self::loadCompoundFromFile(Path::join(Loader::getPluginResourcePath(), "v486", "biome_definitions.nbt")));
 		$this->availableActorIdentifiers = AvailableActorIdentifiersPacket::create(self::loadCompoundFromFile(Path::join(Loader::getPluginResourcePath(), "v486", "entity_identifiers.nbt")));
 
@@ -292,6 +296,7 @@ class v486PacketTranslator extends PacketTranslator{
         if($pk instanceof TransferPacket) return v486TransferPacket::fromLatest($pk);
         if($pk instanceof CodeBuilderSourcePacket) return null;
 		if($pk instanceof UpdateAdventureSettingsPacket) return null;
+		if($pk instanceof ItemRegistryPacket) return null;
 		if($pk instanceof UpdateBlockPacket){
 			$pk->blockRuntimeId = v486TypeConverter::getInstance()->getTypeConverter()->getMVBlockTranslator()->internalIdToNetworkId(MVRuntimeIDtoStateID::getInstance()->getStateIdFromRuntimeId($pk->blockRuntimeId));
 			return $pk;

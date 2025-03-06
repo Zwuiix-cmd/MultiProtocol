@@ -32,7 +32,6 @@ class v419StartGamePacket extends StartGamePacket{
 		$npk->currentTick = $packet->currentTick;
 		$npk->enchantmentSeed = $packet->enchantmentSeed;
 		$npk->blockPalette = $packet->blockPalette;
-		$npk->itemTable = $packet->itemTable;
 		$npk->multiplayerCorrelationId = $packet->multiplayerCorrelationId;
 		$npk->enableNewInventorySystem = $packet->enableNewInventorySystem;
 		$npk->serverSoftwareVersion = $packet->serverSoftwareVersion;
@@ -68,15 +67,6 @@ class v419StartGamePacket extends StartGamePacket{
 			$this->blockPalette[] = new BlockPaletteEntry($blockName, new CacheableNbt($state));
 		}
 
-		$this->itemTable = [];
-		for($i = 0, $count = $in->getUnsignedVarInt(); $i < $count; ++$i){
-			$stringId = $in->getString();
-			$numericId = $in->getSignedLShort();
-			$isComponentBased = $in->getBool();
-
-			$this->itemTable[] = new ItemTypeEntry($stringId, $numericId, $isComponentBased);
-		}
-
 		$this->multiplayerCorrelationId = $in->getString();
 		$this->enableNewInventorySystem = $in->getBool();
 	}
@@ -108,13 +98,7 @@ class v419StartGamePacket extends StartGamePacket{
 			$out->put($entry->getStates()->getEncodedNbt());
 		}
 
-		$out->putUnsignedVarInt(count($this->itemTable));
-		foreach($this->itemTable as $entry){
-			$out->putString($entry->getStringId());
-			$out->putLShort($entry->getNumericId());
-			$out->putBool($entry->isComponentBased());
-		}
-
+		$out->putUnsignedVarInt(0);
 		$out->putString($this->multiplayerCorrelationId);
 		$out->putBool($this->enableNewInventorySystem);
 	}

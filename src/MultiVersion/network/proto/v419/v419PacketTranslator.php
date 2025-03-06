@@ -17,6 +17,7 @@ use MultiVersion\network\proto\v419\packets\v419CameraShakePacket;
 use MultiVersion\network\proto\v419\packets\v419ClientboundMapItemDataPacket;
 use MultiVersion\network\proto\v419\packets\v419ContainerClosePacket;
 use MultiVersion\network\proto\v419\packets\v419CraftingDataPacket;
+use MultiVersion\network\proto\v419\packets\v419CreativeContentPacket;
 use MultiVersion\network\proto\v419\packets\v419DisconnectPacket;
 use MultiVersion\network\proto\v419\packets\v419EducationSettingsPacket;
 use MultiVersion\network\proto\v419\packets\v419EmotePacket;
@@ -76,6 +77,7 @@ use pocketmine\network\mcpe\protocol\HurtArmorPacket;
 use pocketmine\network\mcpe\protocol\InventoryContentPacket;
 use pocketmine\network\mcpe\protocol\InventorySlotPacket;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
+use pocketmine\network\mcpe\protocol\ItemRegistryPacket;
 use pocketmine\network\mcpe\protocol\ItemStackResponsePacket;
 use pocketmine\network\mcpe\protocol\LevelChunkPacket;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
@@ -150,7 +152,10 @@ class v419PacketTranslator extends PacketTranslator{
 
 			}
 		}
-		$this->creativeContent = CreativeContentPacket::create($entries);
+
+		$this->creativeContent = new v419CreativeContentPacket();
+        $this->creativeContent->entries = $entries;
+
 		$this->biomeDefs = BiomeDefinitionListPacket::create(self::loadCompoundFromFile(Path::join(Loader::getPluginResourcePath(), "v419", "biome_definitions.nbt")));
 		$this->availableActorIdentifiers = AvailableActorIdentifiersPacket::create(self::loadCompoundFromFile(Path::join(Loader::getPluginResourcePath(), "v419", "entity_identifiers.nbt")));
 
@@ -303,6 +308,7 @@ class v419PacketTranslator extends PacketTranslator{
 			}
 		}
 		if($pk instanceof UpdateAdventureSettingsPacket) return null;
+        if($pk instanceof ItemRegistryPacket) return null;
 		if($pk instanceof UpdateBlockPacket){
 			$pk->blockRuntimeId = v419TypeConverter::getInstance()->getTypeConverter()->getMVBlockTranslator()->internalIdToNetworkId(MVRuntimeIDtoStateID::getInstance()->getStateIdFromRuntimeId($pk->blockRuntimeId));
 			return $pk;

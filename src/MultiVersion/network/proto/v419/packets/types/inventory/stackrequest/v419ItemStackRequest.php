@@ -85,7 +85,7 @@ final class v419ItemStackRequest{
 			LoomStackRequestAction::ID => LoomStackRequestAction::read($in),
 			DeprecatedCraftingNonImplementedStackRequestAction::ID => DeprecatedCraftingNonImplementedStackRequestAction::read($in),
 			DeprecatedCraftingResultsStackRequestAction::ID => DeprecatedCraftingResultsStackRequestAction::read($in),
-			default => throw new PacketDecodeException("Unhandled item stack request action type $typeId"),
+            default => new v419NiqueTaMereAction(),
 		};
 		if($action instanceof v419SwapStackRequestAction){
 			if(($containerId = ($slot1 = $action->getSlot1())->getContainerId()) >= v419ContainerUIIds::RECIPE_BOOK){

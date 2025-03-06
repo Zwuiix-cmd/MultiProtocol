@@ -39,6 +39,7 @@ use pocketmine\inventory\transaction\InventoryTransaction;
 use pocketmine\inventory\transaction\TransactionBuilder;
 use pocketmine\inventory\transaction\TransactionBuilderInventory;
 use pocketmine\item\Item;
+use pocketmine\item\VanillaItems;
 use pocketmine\network\mcpe\handler\ItemStackContainerIdTranslator;
 use pocketmine\network\mcpe\handler\ItemStackRequestProcessException;
 use pocketmine\network\mcpe\handler\ItemStackResponseBuilder;
@@ -60,6 +61,7 @@ use pocketmine\network\mcpe\protocol\types\inventory\stackrequest\SwapStackReque
 use pocketmine\network\mcpe\protocol\types\inventory\stackrequest\TakeStackRequestAction;
 use pocketmine\network\mcpe\protocol\types\inventory\stackresponse\ItemStackResponse;
 use pocketmine\network\mcpe\protocol\types\inventory\UIInventorySlotOffset;
+use pocketmine\network\PacketHandlingException;
 use pocketmine\player\Player;
 use pocketmine\utils\AssumptionFailedError;
 use function array_key_first;
@@ -120,7 +122,11 @@ class v419ItemStackRequestExectutor{
 	 * @throws ItemStackRequestProcessException
 	 */
 	protected function getBuilderInventoryAndSlot(v419ItemStackRequestSlotInfo $info) : array{
-		[$windowId, $slotId] = ItemStackContainerIdTranslator::translate($info->getContainerId(), $this->inventoryManager->getCurrentWindowId(), $info->getSlotId());
+        try {
+            [$windowId, $slotId] = ItemStackContainerIdTranslator::translate($info->getContainerId(), $this->inventoryManager->getCurrentWindowId(), $info->getSlotId());
+        }catch(PacketHandlingException $exception) {
+            return []; //psartek le patch
+        }
 		$windowAndSlot = $this->inventoryManager->locateWindowAndSlot($windowId, $slotId);
 		if($windowAndSlot === null){
 			throw new ItemStackRequestProcessException("No open inventory matches container UI ID: " . $info->getContainerId() . ", slot ID: " . $info->getSlotId());
@@ -156,6 +162,7 @@ class v419ItemStackRequestExectutor{
 			return $this->takeCreatedItem($count);
 		}
 		$this->requestSlotInfos[] = $slotInfo;
+        if(empty($this->getBuilderInventoryAndSlot($slotInfo))) return VanillaItems::AIR();
 		[$inventory, $slot] = $this->getBuilderInventoryAndSlot($slotInfo);
 		if($count < 1){
 			//this should be impossible at the protocol level, but in case of buggy core code this will prevent exploits
@@ -179,6 +186,7 @@ class v419ItemStackRequestExectutor{
 	 */
 	protected function addItemToSlot(v419ItemStackRequestSlotInfo $slotInfo, Item $item, int $count) : void{
 		$this->requestSlotInfos[] = $slotInfo;
+        if(empty($this->getBuilderInventoryAndSlot($slotInfo))) return;
 		[$inventory, $slot] = $this->getBuilderInventoryAndSlot($slotInfo);
 		if($count < 1){
 			//this should be impossible at the protocol level, but in case of buggy core code this will prevent exploits

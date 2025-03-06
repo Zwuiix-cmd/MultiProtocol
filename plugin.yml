@@ -1,5 +1,5 @@
 ---
-name: MultiVersion
+name: MultiProtocol
 version: 0.0.1
 main: MultiVersion\Loader
 api: 5.0.0

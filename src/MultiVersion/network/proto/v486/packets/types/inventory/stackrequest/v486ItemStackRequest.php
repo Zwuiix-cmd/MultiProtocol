@@ -86,7 +86,7 @@ final class v486ItemStackRequest{
 			LoomStackRequestAction::ID => LoomStackRequestAction::read($in),
 			DeprecatedCraftingNonImplementedStackRequestAction::ID => DeprecatedCraftingNonImplementedStackRequestAction::read($in),
 			DeprecatedCraftingResultsStackRequestAction::ID => DeprecatedCraftingResultsStackRequestAction::read($in),
-			default => throw new PacketDecodeException("Unhandled item stack request action type $typeId"),
+            default => throw new PacketDecodeException("Unhandled item stack request action type $typeId"),
 		};
 		if($action instanceof v486SwapStackRequestAction){
 			if(($containerId = ($slot1 = $action->getSlot1())->getContainerId()) >= v486ContainerUIIds::RECIPE_BOOK){

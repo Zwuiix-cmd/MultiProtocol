@@ -8,11 +8,11 @@ use pocketmine\network\mcpe\protocol\types\PlayerMovementSettings;
 final class v419PlayerMovementSettings{
 
 	public static function fromLatest(PlayerMovementSettings $pk) : self{
-		return new self($pk->getMovementType());
+		return new self($pk->getMovementType()->value);
 	}
 
 	public function __construct(
-		private int $movementType,
+		private readonly int $movementType,
 	){
 	}
 
